@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/ai";
+const API_URL =
+  "https://hostelhub-ai-powered-hostel-management.onrender.com/api/ai";
 
 export const askAI = async (message) => {
   const token = localStorage.getItem("token");
