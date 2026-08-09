@@ -20,17 +20,30 @@ const app = express();
 
 connectDB();
 
-// ✅ CORS should come BEFORE routes
+// =======================================
+// CORS
+// =======================================
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://hostelhub-ai-powered-hostel-management-qtf7.onrender.com",
+    ],
     credentials: true,
   })
 );
 
+// =======================================
+// Middleware
+// =======================================
+
 app.use(express.json());
 
+// =======================================
 // Routes
+// =======================================
+
 app.use("/api/auth", authRoutes);
 app.use("/api/test", testRoutes);
 app.use("/api/rooms", roomRoutes);
@@ -43,9 +56,17 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notices", noticeRoutes);
 app.use("/api/ai", aiRoutes);
 
+// =======================================
+// Test Route
+// =======================================
+
 app.get("/", (req, res) => {
   res.send("HostelHub Backend Running");
 });
+
+// =======================================
+// Server
+// =======================================
 
 const PORT = process.env.PORT || 5000;
 
