@@ -11,80 +11,95 @@ const quickBtn = {
   fontSize: "13px",
   fontWeight: "600",
 };
+
+const initialMessage = {
+  sender: "ai",
+  text: "👋 Hello! I'm HostelHub AI. How can I help you today?",
+};
+
 function AIChat() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+
   const [messages, setMessages] = useState(() => {
-  const saved = localStorage.getItem("aiChat");
+    const saved = localStorage.getItem("aiChat");
 
-  if (saved) {
-    return JSON.parse(saved);
-  }
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return [initialMessage];
+      }
+    }
 
-  return [
-    {
-      sender: "ai",
-      text: "👋 Hello! I'm HostelHub AI. How can I help you today?",
-    },
-  ];
-});
+    return [initialMessage];
+  });
 
   const bottomRef = useRef(null);
 
+  // Scroll to latest message
   useEffect(() => {
     bottomRef.current?.scrollIntoView({
       behavior: "smooth",
     });
+  }, [messages, loading]);
+
+  // Save chat history
+  useEffect(() => {
+    localStorage.setItem("aiChat", JSON.stringify(messages));
   }, [messages]);
-      useEffect(() => {
-  localStorage.setItem("aiChat", JSON.stringify(messages));
-}, [messages]);
-    const sendQuickMessage = async (text) => {
-  if (!text) return;
 
-  const userMessage = {
-    sender: "user",
-    text,
-  };
-
-  setMessages((prev) => [...prev, userMessage]);
-
-  setLoading(true);
-
-  try {
-    const data = await askAI(text);
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        sender: "ai",
-        text: data.reply,
-      },
-    ]);
-  } catch (error) {
-    setMessages((prev) => [
-      ...prev,
-      {
-        sender: "ai",
-        text: "❌ Failed to contact AI.",
-      },
-    ]);
-  } finally {
-    setLoading(false);
-  }
-};
-  const sendMessage = async () => {
-    if (!message.trim()) return;
+  // Send quick button message
+  const sendQuickMessage = async (text) => {
+    if (!text || loading) return;
 
     const userMessage = {
       sender: "user",
-      text: message,
+      text,
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setLoading(true);
+
+    try {
+      const data = await askAI(text);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "ai",
+          text: data.reply,
+        },
+      ]);
+    } catch (error) {
+      console.error("AI Error:", error);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "ai",
+          text: "❌ Failed to contact AI. Please try again.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Send typed message
+  const sendMessage = async () => {
+    const currentMessage = message.trim();
+
+    if (!currentMessage || loading) return;
+
+    const userMessage = {
+      sender: "user",
+      text: currentMessage,
     };
 
     setMessages((prev) => [...prev, userMessage]);
 
-    const currentMessage = message;
     setMessage("");
     setLoading(true);
 
@@ -99,11 +114,13 @@ function AIChat() {
         },
       ]);
     } catch (error) {
+      console.error("AI Error:", error);
+
       setMessages((prev) => [
         ...prev,
         {
           sender: "ai",
-          text: "❌ Failed to contact AI.",
+          text: "❌ Failed to contact AI. Please try again.",
         },
       ]);
     } finally {
@@ -111,15 +128,23 @@ function AIChat() {
     }
   };
 
+  // Enter key
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
       sendMessage();
     }
   };
 
+  // Clear conversation
+  const clearChat = () => {
+    setMessages([initialMessage]);
+    localStorage.removeItem("aiChat");
+  };
+
   return (
     <>
-      {/* Floating Button */}
+      {/* ================= FLOATING AI BUTTON ================= */}
       <button
         onClick={() => setOpen(!open)}
         style={{
@@ -135,12 +160,13 @@ function AIChat() {
           fontSize: "28px",
           cursor: "pointer",
           zIndex: 999,
+          boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
         }}
       >
         🤖
       </button>
 
-      {/* Chat Window */}
+      {/* ================= CHAT WINDOW ================= */}
       {open && (
         <div
           style={{
@@ -158,119 +184,83 @@ function AIChat() {
             zIndex: 999,
           }}
         >
-          {/* Header */}
-         {/* Header */}
+          {/* ================= HEADER ================= */}
+          <div
+            style={{
+              background: "#2563eb",
+              color: "#fff",
+              padding: "15px",
+              fontWeight: "bold",
+              fontSize: "18px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span>🤖 HostelHub AI</span>
 
-<div
-  style={{
-    background: "#2563eb",
-    color: "#fff",
-    padding: "15px",
-    fontWeight: "bold",
-    fontSize: "18px",
-  }}
->
-  <div
-    style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-    }}
-  >
-    <span>🤖 HostelHub AI</span>
+              <button
+                onClick={clearChat}
+                title="Clear chat"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#fff",
+                  cursor: "pointer",
+                  fontSize: "18px",
+                }}
+              >
+                🗑
+              </button>
+            </div>
+          </div>
 
-    <button
-      onClick={() => {
-        const initial = [
-          {
-            sender: "ai",
-            text: "👋 Hello! I'm HostelHub AI. How can I help you today?",
-          },
-        ];
+          {/* ================= QUICK OPTIONS ================= */}
+          {messages.length === 1 && (
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px",
+                padding: "10px",
+                borderBottom: "1px solid #ddd",
+                background: "#fff",
+              }}
+            >
+              <button
+                onClick={() =>
+                  sendQuickMessage("What is my room number?")
+                }
+                style={quickBtn}
+              >
+                🏠 My Room
+              </button>
 
-        setMessages(initial);
-        localStorage.removeItem("aiChat");
-      }}
-      style={{
-        background: "transparent",
-        border: "none",
-        color: "#fff",
-        cursor: "pointer",
-        fontSize: "18px",
-      }}
-    >
-      🗑
-    </button>
-  </div>
-</div>
-        <div
-  style={{
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "8px",
-    padding: "10px",
-    borderBottom: "1px solid #ddd",
-    background: "#fff",
-  }}
->
-  
-  <div
-  style={{
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "8px",
-    padding: "10px",
-    borderBottom: "1px solid #ddd",
-    background: "#fff",
-  }}
->
-  <button
-    onClick={() => sendQuickMessage("What is my room number?")}
-    style={quickBtn}
-  >
-    🏠 My Room
-  </button>
+              <button
+                onClick={() =>
+                  sendQuickMessage("Do I have pending fees?")
+                }
+                style={quickBtn}
+              >
+                💰 Fees
+              </button>
 
-  <button
-    onClick={() => sendQuickMessage("Do I have pending fees?")}
-    style={quickBtn}
-  >
-    💰 Fees
-  </button>
+              <button
+                onClick={() =>
+                  sendQuickMessage("Show latest notices")
+                }
+                style={quickBtn}
+              >
+                📢 Notices
+              </button>
+            </div>
+          )}
 
-  <button
-    onClick={() => sendQuickMessage("Show latest notices")}
-    style={quickBtn}
-  >
-    📢 Notices
-  </button>
-
-  <button
-    onClick={() =>
-      sendQuickMessage(
-        "Write a leave application for 2 days because I have a fever starting tomorrow."
-      )
-    }
-    style={quickBtn}
-  >
-    📝 Leave
-  </button>
-
-  <button
-    onClick={() =>
-      sendQuickMessage(
-        "Write a complaint for broken fan."
-      )
-    }
-    style={quickBtn}
-  >
-    ⚠ Complaint
-  </button>
-</div>
-
-  
-</div>
-          {/* Messages */}
+          {/* ================= MESSAGES ================= */}
           <div
             style={{
               flex: 1,
@@ -305,6 +295,7 @@ function AIChat() {
                     borderRadius: "15px",
                     maxWidth: "80%",
                     whiteSpace: "pre-wrap",
+                    lineHeight: "1.5",
                   }}
                 >
                   {msg.text}
@@ -312,8 +303,14 @@ function AIChat() {
               </div>
             ))}
 
+            {/* Loading */}
             {loading && (
-              <div style={{ color: "#666" }}>
+              <div
+                style={{
+                  color: "#666",
+                  marginBottom: "10px",
+                }}
+              >
                 🤖 Typing...
               </div>
             )}
@@ -321,12 +318,13 @@ function AIChat() {
             <div ref={bottomRef}></div>
           </div>
 
-          {/* Input */}
+          {/* ================= INPUT ================= */}
           <div
             style={{
               display: "flex",
               padding: "10px",
               borderTop: "1px solid #ddd",
+              background: "#fff",
             }}
           >
             <input
@@ -335,6 +333,7 @@ function AIChat() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
+              disabled={loading}
               style={{
                 flex: 1,
                 padding: "10px",
@@ -346,15 +345,21 @@ function AIChat() {
 
             <button
               onClick={sendMessage}
-              disabled={loading}
+              disabled={loading || !message.trim()}
               style={{
                 marginLeft: "10px",
                 padding: "10px 18px",
                 border: "none",
-                background: "#2563eb",
+                background:
+                  loading || !message.trim()
+                    ? "#9ca3af"
+                    : "#2563eb",
                 color: "#fff",
                 borderRadius: "8px",
-                cursor: loading ? "not-allowed" : "pointer",
+                cursor:
+                  loading || !message.trim()
+                    ? "not-allowed"
+                    : "pointer",
               }}
             >
               Send

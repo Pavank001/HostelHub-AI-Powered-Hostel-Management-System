@@ -58,7 +58,7 @@ function App() {
       </Routes>
 
       {/* AI Chat */}
-      <AIChat />
+      {!window.location.pathname.startsWith("/admin") && <AIChat />}
     </BrowserRouter>
   );
 }
