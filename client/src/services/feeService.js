@@ -21,6 +21,19 @@ export const getMyFees = async () => {
 };
 
 // =======================================
+// Student - Send Payment Note
+// =======================================
+export const sendPaymentNote = async (id, note) => {
+  const response = await API.put(
+    `/fees/${id}/payment-note`,
+    { note },
+    authConfig()
+  );
+
+  return response.data;
+};
+
+// =======================================
 // Admin - Get All Fees
 // =======================================
 export const getAllFees = async () => {
@@ -64,6 +77,19 @@ export const updateFee = async (id, data) => {
 export const deleteFee = async (id) => {
   const response = await API.delete(
     `/fees/${id}`,
+    authConfig()
+  );
+
+  return response.data;
+};
+
+// =======================================
+// Admin - Update Fee Status
+// =======================================
+export const updateFeeStatus = async (id, status) => {
+  const response = await API.put(
+    `/fees/${id}/status`,
+    { status },
     authConfig()
   );
 

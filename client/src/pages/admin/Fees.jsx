@@ -11,6 +11,7 @@ import {
   createFee,
   updateFee,
   deleteFee,
+  updateFeeStatus,
 } from "../../services/feeService";
 
 import { getAllStudents } from "../../services/studentService";
@@ -173,6 +174,38 @@ function Fees() {
       );
     }
   };
+
+  // =======================================
+// Mark Fee as Paid
+// =======================================
+
+const handleMarkAsPaid = async (id) => {
+  const confirmed = window.confirm(
+    "Have you verified the student's payment?"
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const response = await updateFeeStatus(
+      id,
+      "Paid"
+    );
+
+    if (response.success) {
+      alert("Fee marked as Paid successfully");
+
+      await loadFees();
+    }
+  } catch (error) {
+    console.log(error);
+
+    alert(
+      error.response?.data?.message ||
+        "Failed to update fee status"
+    );
+  }
+};
 
   // =======================================
   // FEE CALCULATIONS

@@ -36,6 +36,13 @@ const feeSchema = new mongoose.Schema(
       enum: ["Pending", "Partially Paid", "Paid"],
       default: "Pending",
     },
+
+    // Student payment message to admin
+    paymentNote: {
+      type: String,
+      default: "",
+      trim: true,
+    },
   },
   {
     timestamps: true,

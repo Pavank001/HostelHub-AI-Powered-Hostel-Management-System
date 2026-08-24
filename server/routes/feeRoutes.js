@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 
 const {
@@ -7,6 +8,8 @@ const {
   getMyFees,
   updateFee,
   deleteFee,
+  sendPaymentNote,
+  updateFeeStatus,
 } = require("../controllers/feeController");
 
 const {
@@ -14,6 +17,7 @@ const {
   authorize,
 } = require("../middleware/authMiddleware");
 
+// Admin - Create fee
 router.post(
   "/",
   protect,
@@ -21,6 +25,7 @@ router.post(
   createFee
 );
 
+// Admin - Get all fees
 router.get(
   "/",
   protect,
@@ -28,6 +33,7 @@ router.get(
   getAllFees
 );
 
+// Student - Get own fees
 router.get(
   "/my",
   protect,
@@ -35,6 +41,15 @@ router.get(
   getMyFees
 );
 
+// Student - Send payment note
+router.put(
+  "/:id/payment-note",
+  protect,
+  authorize("student"),
+  sendPaymentNote
+);
+
+// Admin - Update fee
 router.put(
   "/:id",
   protect,
@@ -42,6 +57,15 @@ router.put(
   updateFee
 );
 
+// Admin - Update fee status
+router.put(
+  "/:id/status",
+  protect,
+  authorize("admin"),
+  updateFeeStatus
+);
+
+// Admin - Delete fee
 router.delete(
   "/:id",
   protect,
