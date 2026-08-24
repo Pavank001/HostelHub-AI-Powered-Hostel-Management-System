@@ -180,25 +180,18 @@ function Fees() {
 // =======================================
 
 const handleMarkAsPaid = async (id) => {
-  const confirmed = window.confirm(
-    "Have you verified the student's payment?"
-  );
-
-  if (!confirmed) return;
-
   try {
-    const response = await updateFeeStatus(
-      id,
-      "Paid"
-    );
+    const response = await updateFeeStatus(id, "Paid");
+
+    console.log("MARK PAID RESPONSE:", response);
 
     if (response.success) {
       alert("Fee marked as Paid successfully");
-
       await loadFees();
     }
   } catch (error) {
-    console.log(error);
+    console.log("MARK PAID ERROR:", error);
+    console.log("ERROR RESPONSE:", error.response?.data);
 
     alert(
       error.response?.data?.message ||
@@ -342,6 +335,7 @@ const handleMarkAsPaid = async (id) => {
           fees={fees}
           onEdit={setSelectedFee}
           onDelete={handleDelete}
+          onMarkAsPaid={handleMarkAsPaid}
         />
       )}
 
