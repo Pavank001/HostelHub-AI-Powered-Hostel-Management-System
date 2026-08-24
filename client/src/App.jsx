@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 // Authentication
 import Login from "./pages/auth/Login";
@@ -26,10 +26,37 @@ import AdminNotices from "./pages/admin/Notices";
 // AI Chat
 import AIChat from "./components/ai/AIChat";
 
+
+function StudentAIChat() {
+  const location = useLocation();
+
+  const studentPages = [
+    "/student/dashboard",
+    "/student/profile",
+    "/student/profile/edit",
+    "/student/room",
+    "/student/complaints",
+    "/student/leave",
+    "/student/fees",
+    "/student/notices",
+  ];
+
+  const isStudentPage = studentPages.includes(location.pathname);
+
+  if (!isStudentPage) {
+    return null;
+  }
+
+  return <AIChat />;
+}
+
+
 function App() {
   return (
     <BrowserRouter>
+
       <Routes>
+
         {/* Authentication */}
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
@@ -37,28 +64,88 @@ function App() {
 
         {/* ================= STUDENT ================= */}
 
-        <Route path="/student/dashboard" element={<StudentDashboard />} />
-        <Route path="/student/profile" element={<Profile />} />
-        <Route path="/student/profile/edit" element={<EditProfile />} />
-        <Route path="/student/room" element={<Room />} />
-        <Route path="/student/complaints" element={<StudentComplaints />} />
-        <Route path="/student/leave" element={<Leave />} />
-        <Route path="/student/fees" element={<StudentFees />} />
-        <Route path="/student/notices" element={<StudentNotices />} />
+        <Route
+          path="/student/dashboard"
+          element={<StudentDashboard />}
+        />
+
+        <Route
+          path="/student/profile"
+          element={<Profile />}
+        />
+
+        <Route
+          path="/student/profile/edit"
+          element={<EditProfile />}
+        />
+
+        <Route
+          path="/student/room"
+          element={<Room />}
+        />
+
+        <Route
+          path="/student/complaints"
+          element={<StudentComplaints />}
+        />
+
+        <Route
+          path="/student/leave"
+          element={<Leave />}
+        />
+
+        <Route
+          path="/student/fees"
+          element={<StudentFees />}
+        />
+
+        <Route
+          path="/student/notices"
+          element={<StudentNotices />}
+        />
 
         {/* ================= ADMIN ================= */}
 
-        <Route path="/admin/dashboard" element={<Dashboard />} />
-        <Route path="/admin/students" element={<Students />} />
-        <Route path="/admin/rooms" element={<Rooms />} />
-        <Route path="/admin/complaints" element={<AdminComplaints />} />
-        <Route path="/admin/leaves" element={<Leaves />} />
-        <Route path="/admin/fees" element={<AdminFees />} />
-        <Route path="/admin/notices" element={<AdminNotices />} />
+        <Route
+          path="/admin/dashboard"
+          element={<Dashboard />}
+        />
+
+        <Route
+          path="/admin/students"
+          element={<Students />}
+        />
+
+        <Route
+          path="/admin/rooms"
+          element={<Rooms />}
+        />
+
+        <Route
+          path="/admin/complaints"
+          element={<AdminComplaints />}
+        />
+
+        <Route
+          path="/admin/leaves"
+          element={<Leaves />}
+        />
+
+        <Route
+          path="/admin/fees"
+          element={<AdminFees />}
+        />
+
+        <Route
+          path="/admin/notices"
+          element={<AdminNotices />}
+        />
+
       </Routes>
 
-      {/* AI Chat */}
-      {!window.location.pathname.startsWith("/admin") && <AIChat />}
+      {/* AI only on student pages */}
+      <StudentAIChat />
+
     </BrowserRouter>
   );
 }
