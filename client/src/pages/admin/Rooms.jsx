@@ -1,26 +1,7 @@
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-
-import AdminLayout from "../../layouts/AdminLayout";
-import RoomTable from "../../components/RoomTable";
-import AddRoomModal from "../../components/AddRoomModal";
-import EditRoomModal from "../../components/EditRoomModal";
-
-import {
-  getAllRooms,
-  createRoom,
-  updateRoom,
-  deleteRoom,
-} from "../../services/roomService";
-
 function Rooms() {
   const [rooms, setRooms] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
-
-  // =======================================
-  // Load Rooms
-  // =======================================
 
   useEffect(() => {
     loadRooms();
@@ -33,14 +14,9 @@ function Rooms() {
       setRooms(data.rooms || []);
     } catch (error) {
       console.log(error);
-
       toast.error("Failed to load rooms");
     }
   };
-
-  // =======================================
-  // Add Room
-  // =======================================
 
   const handleAdd = async (formData) => {
     try {
@@ -61,17 +37,9 @@ function Rooms() {
     }
   };
 
-  // =======================================
-  // Edit Room
-  // =======================================
-
   const handleEdit = (room) => {
     setSelectedRoom(room);
   };
-
-  // =======================================
-  // Update Room
-  // =======================================
 
   const handleUpdate = async (id, formData) => {
     try {
@@ -92,13 +60,10 @@ function Rooms() {
     }
   };
 
-  // =======================================
-  // Delete Room
-  // =======================================
-
-  const handleDelete = async (room) => {
+  // SIMPLE DELETE
+  const handleDelete = async (id) => {
     try {
-      await deleteRoom(room._id);
+      await deleteRoom(id);
 
       toast.success("Room Deleted Successfully");
 
@@ -113,14 +78,8 @@ function Rooms() {
     }
   };
 
-  // =======================================
-  // UI
-  // =======================================
-
   return (
     <AdminLayout>
-
-      {/* Header */}
 
       <div className="flex justify-between items-center mb-6">
 
@@ -137,15 +96,11 @@ function Rooms() {
 
       </div>
 
-      {/* Room Table */}
-
       <RoomTable
         rooms={rooms}
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
-
-      {/* Add Room Modal */}
 
       {showAddModal && (
         <AddRoomModal
@@ -153,8 +108,6 @@ function Rooms() {
           onSave={handleAdd}
         />
       )}
-
-      {/* Edit Room Modal */}
 
       {selectedRoom && (
         <EditRoomModal

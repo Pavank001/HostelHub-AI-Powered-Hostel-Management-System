@@ -37,11 +37,10 @@ export const updateRoom = async (id, data) => {
 
 // Delete room
 export const deleteRoom = async (id) => {
-  const response = await API.delete(`/rooms/${id}`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
+  const response = await API.delete(
+    `/rooms/${id}`,
+    authConfig()
+  );
 
   return response.data;
 };
