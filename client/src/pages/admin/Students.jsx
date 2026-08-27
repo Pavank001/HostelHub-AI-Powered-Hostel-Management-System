@@ -45,19 +45,52 @@ function Students() {
   // Delete Student
   // =======================================
 
-  const handleDelete = async (id) => {
-  if (!window.confirm("Are you sure you want to delete this student?")) {
-    return;
-  }
+const handleDelete = async (id) => {
+  toast(
+    (t) => (
+      <div className="flex items-center gap-3">
+        <span className="font-medium">
+          Delete this student?
+        </span>
 
-  try {
-    await deleteStudent(id);
-    alert("Student Deleted Successfully");
-    loadStudents();
-  } catch (error) {
-    console.log(error);
-    alert("Failed to delete student");
-  }
+        <button
+          onClick={async () => {
+            toast.dismiss(t.id);
+
+            try {
+              await deleteStudent(id);
+
+              toast.success(
+                "Student Deleted Successfully"
+              );
+
+              await loadStudents();
+            } catch (error) {
+              console.log(error);
+
+              toast.error(
+                error.response?.data?.message ||
+                  "Failed to delete student"
+              );
+            }
+          }}
+          className="bg-red-600 text-white px-3 py-1 rounded"
+        >
+          Delete
+        </button>
+
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          className="bg-gray-500 text-white px-3 py-1 rounded"
+        >
+          Cancel
+        </button>
+      </div>
+    ),
+    {
+      duration: 5000,
+    }
+  );
 };
 
   // =======================================
