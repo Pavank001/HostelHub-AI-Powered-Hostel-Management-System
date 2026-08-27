@@ -2,6 +2,12 @@ import API from "./api";
 
 const getToken = () => localStorage.getItem("token");
 
+const authConfig = () => ({
+  headers: {
+    Authorization: `Bearer ${getToken()}`,
+  },
+});
+
 // Get all rooms
 export const getAllRooms = async () => {
   const response = await API.get(
