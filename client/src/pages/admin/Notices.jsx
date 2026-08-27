@@ -63,27 +63,48 @@ function Notices() {
   // ==============================
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this notice?"
-    );
+  toast(
+    (t) => (
+      <div className="flex items-center gap-4">
+        <span>Delete this notice?</span>
 
-    if (!confirmed) return;
+        <button
+          onClick={async () => {
+            toast.dismiss(t.id);
 
-    try {
-      await deleteNotice(id);
+            try {
+              await deleteNotice(id);
 
-      toast.success("Notice Deleted Successfully");
+              toast.success("Notice Deleted Successfully");
 
-      await loadNotices();
-    } catch (error) {
-      console.log("DELETE NOTICE ERROR:", error);
+              await loadNotices();
+            } catch (error) {
+              console.log("DELETE NOTICE ERROR:", error);
 
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to delete notice"
-      );
+              toast.error(
+                error.response?.data?.message ||
+                  "Failed to delete notice"
+              );
+            }
+          }}
+          className="bg-red-600 text-white px-3 py-1 rounded"
+        >
+          Delete
+        </button>
+
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          className="bg-gray-500 text-white px-3 py-1 rounded"
+        >
+          Cancel
+        </button>
+      </div>
+    ),
+    {
+      duration: 5000,
     }
-  };
+  );
+};
 
   // ==============================
   // UI
