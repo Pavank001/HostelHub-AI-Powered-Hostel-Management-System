@@ -21,16 +21,13 @@ function Fees() {
   const [fees, setFees] = useState([]);
   const [students, setStudents] = useState([]);
 
-  const [showAddModal, setShowAddModal] =
-    useState(false);
-
-  const [selectedFee, setSelectedFee] =
-    useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedFee, setSelectedFee] = useState(null);
 
   const [loading, setLoading] = useState(true);
 
   // =======================================
-  // Load data
+  // Load Data
   // =======================================
 
   useEffect(() => {
@@ -53,7 +50,7 @@ function Fees() {
   };
 
   // =======================================
-  // Get all fees
+  // Get All Fees
   // =======================================
 
   const loadFees = async () => {
@@ -62,9 +59,9 @@ function Fees() {
 
       setFees(data.fees || []);
     } catch (error) {
-      console.log(error);
+      console.log("LOAD FEES ERROR:", error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Failed to load fees"
       );
@@ -72,7 +69,7 @@ function Fees() {
   };
 
   // =======================================
-  // Get all students
+  // Get All Students
   // =======================================
 
   const loadStudents = async () => {
@@ -81,9 +78,9 @@ function Fees() {
 
       setStudents(data.students || []);
     } catch (error) {
-      console.log(error);
+      console.log("LOAD STUDENTS ERROR:", error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Failed to load students"
       );
@@ -104,7 +101,7 @@ function Fees() {
 
       await loadFees();
     } catch (error) {
-      console.log(error);
+      console.log("CREATE FEE ERROR:", error);
 
       toast.error(
         error.response?.data?.message ||
@@ -119,30 +116,22 @@ function Fees() {
 
   const handleUpdate = async (id, formData) => {
     try {
-      const response = await updateFee(
-        id,
-        formData
-      );
+      const response = await updateFee(id, formData);
 
-      console.log(
-        "UPDATE RESPONSE:",
-        response
-      );
+      console.log("UPDATE RESPONSE:", response);
 
       if (response.success) {
-        alert("Fee Updated Successfully");
+        // Browser popup removed
+        toast.success("Fee Updated Successfully");
 
         setSelectedFee(null);
 
         await loadFees();
       }
     } catch (error) {
-      console.log(
-        "UPDATE ERROR:",
-        error
-      );
+      console.log("UPDATE ERROR:", error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Failed to update fee"
       );
@@ -154,22 +143,16 @@ function Fees() {
   // =======================================
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this fee?"
-    );
-
-    if (!confirmed) return;
-
     try {
       await deleteFee(id);
 
-      alert("Fee Deleted Successfully");
+      toast.success("Fee Deleted Successfully");
 
       await loadFees();
     } catch (error) {
-      console.log(error);
+      console.log("DELETE FEE ERROR:", error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Failed to delete fee"
       );
@@ -177,42 +160,51 @@ function Fees() {
   };
 
   // =======================================
-// Mark Fee as Paid
-// =======================================
+  // Mark Fee as Paid
+  // =======================================
 
-const handleMarkAsPaid = async (id) => {
-  try {
-    const response = await updateFeeStatus(id, "Paid");
+  const handleMarkAsPaid = async (id) => {
+    try {
+      const response = await updateFeeStatus(
+        id,
+        "Paid"
+      );
 
-    console.log("MARK PAID RESPONSE:", response);
+      console.log(
+        "MARK PAID RESPONSE:",
+        response
+      );
 
-    if (response.success) {
-      toast.success("Fee marked as Paid successfully");
-      await loadFees();
+      if (response.success) {
+        toast.success(
+          "Fee marked as Paid successfully"
+        );
+
+        await loadFees();
+      }
+    } catch (error) {
+      console.log(
+        "MARK PAID ERROR:",
+        error
+      );
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to update fee status"
+      );
     }
-  } catch (error) {
-    console.log("MARK PAID ERROR:", error);
-    console.log("ERROR RESPONSE:", error.response?.data);
-
-    toast.error(
-      error.response?.data?.message ||
-        "Failed to update fee status"
-    );
-  }
-};
+  };
 
   // =======================================
-  // FEE CALCULATIONS
+  // Fee Calculations
   // =======================================
 
-  // Total of all fees
   const totalFees = fees.reduce(
     (total, fee) =>
       total + Number(fee.amount || 0),
     0
   );
 
-  // Total of Paid fees
   const paidAmount = fees
     .filter(
       (fee) => fee.status === "Paid"
@@ -223,7 +215,6 @@ const handleMarkAsPaid = async (id) => {
       0
     );
 
-  // Total of Pending fees
   const pendingAmount = fees
     .filter(
       (fee) => fee.status === "Pending"
@@ -233,6 +224,10 @@ const handleMarkAsPaid = async (id) => {
         total + Number(fee.amount || 0),
       0
     );
+
+  // =======================================
+  // UI
+  // =======================================
 
   return (
     <AdminLayout>
@@ -265,14 +260,13 @@ const handleMarkAsPaid = async (id) => {
 
       </div>
 
-
       {/* ===================================
           SUMMARY CARDS
       =================================== */}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
 
-        {/* TOTAL FEES */}
+        {/* TOTAL */}
 
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
 
@@ -286,8 +280,7 @@ const handleMarkAsPaid = async (id) => {
 
         </div>
 
-
-        {/* PAID AMOUNT */}
+        {/* PAID */}
 
         <div className="bg-green-50 border border-green-200 rounded-xl p-5">
 
@@ -301,8 +294,7 @@ const handleMarkAsPaid = async (id) => {
 
         </div>
 
-
-        {/* PENDING AMOUNT */}
+        {/* PENDING */}
 
         <div className="bg-red-50 border border-red-200 rounded-xl p-5">
 
@@ -318,12 +310,12 @@ const handleMarkAsPaid = async (id) => {
 
       </div>
 
-
       {/* ===================================
           FEE TABLE
       =================================== */}
 
       {loading ? (
+
         <div className="bg-white rounded-xl shadow p-8 text-center">
 
           <p className="text-gray-500">
@@ -331,21 +323,24 @@ const handleMarkAsPaid = async (id) => {
           </p>
 
         </div>
+
       ) : (
+
         <FeeTable
           fees={fees}
           onEdit={setSelectedFee}
           onDelete={handleDelete}
           onMarkAsPaid={handleMarkAsPaid}
         />
-      )}
 
+      )}
 
       {/* ===================================
           ADD FEE MODAL
       =================================== */}
 
       {showAddModal && (
+
         <AddFeeModal
           students={students}
           onClose={() =>
@@ -353,14 +348,15 @@ const handleMarkAsPaid = async (id) => {
           }
           onSave={handleCreate}
         />
-      )}
 
+      )}
 
       {/* ===================================
           UPDATE FEE MODAL
       =================================== */}
 
       {selectedFee && (
+
         <UpdateFeeModal
           fee={selectedFee}
           onClose={() =>
@@ -368,6 +364,7 @@ const handleMarkAsPaid = async (id) => {
           }
           onSave={handleUpdate}
         />
+
       )}
 
     </AdminLayout>
