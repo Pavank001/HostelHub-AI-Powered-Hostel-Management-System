@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+
 import StudentLayout from "../../layouts/StudentLayout";
 import ComplaintForm from "../../components/ComplaintForm";
 import ComplaintCard from "../../components/ComplaintCard";
@@ -16,54 +17,68 @@ function Complaints() {
     loadComplaints();
   }, []);
 
+  // ===============================
+  // Load My Complaints
+  // ===============================
+
   const loadComplaints = async () => {
     try {
       const data = await getMyComplaints();
-      setComplaints(data.complaints);
-    } catch (err) {
-      console.log(err);
+
+      setComplaints(data.complaints || []);
+    } catch (error) {
+      console.log("LOAD COMPLAINTS ERROR:", error);
     }
   };
 
- const handleSubmit = async (formData) => {
-  try {
-    await createComplaint(formData);
+  // ===============================
+  // Submit Complaint
+  // ===============================
 
-    toast.success("Complaint Submitted Successfully");
+  const handleSubmit = async (formData) => {
+    try {
+      await createComplaint(formData);
 
-    setFormData({
-      title: "",
-      description: "",
-      category: "Other",
-      priority: "Medium",
-    });
+      // Success toast
+      toast.success("Complaint Submitted Successfully");
 
-    await loadComplaints();
+      // Reload complaints
+      await loadComplaints();
 
-  } catch (error) {
-    console.log(error);
+    } catch (error) {
+      console.log("SUBMIT COMPLAINT ERROR:", error);
 
-    toast.error(
-      error.response?.data?.message ||
-      "Failed to submit complaint"
-    );
-  }
-};
+      toast.error(
+        error.response?.data?.message ||
+        "Failed to submit complaint"
+      );
+    }
+  };
 
   return (
     <StudentLayout>
-      <h1 className="text-3xl font-bold mb-6">My Complaints</h1>
 
-      <ComplaintForm onSubmit={handleSubmit} />
+      <h1 className="text-3xl font-bold mb-6">
+        My Complaints
+      </h1>
 
-      <div className="grid md:grid-cols-2 gap-5">
+      {/* Complaint Form */}
+      <ComplaintForm
+        onSubmit={handleSubmit}
+      />
+
+      {/* Complaints */}
+      <div className="grid md:grid-cols-2 gap-5 mt-6">
+
         {complaints.map((complaint) => (
           <ComplaintCard
             key={complaint._id}
             complaint={complaint}
           />
         ))}
+
       </div>
+
     </StudentLayout>
   );
 }
