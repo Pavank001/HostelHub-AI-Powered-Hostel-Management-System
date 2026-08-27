@@ -46,31 +46,19 @@ function Students() {
   // =======================================
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this student?"
-    );
+  if (!window.confirm("Are you sure you want to delete this student?")) {
+    return;
+  }
 
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      await deleteStudent(id);
-
-      toast.success(
-        "Student Deleted Successfully"
-      );
-
-      loadStudents();
-    } catch (error) {
-      console.log(error);
-
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to delete student"
-      );
-    }
-  };
+  try {
+    await deleteStudent(id);
+    alert("Student Deleted Successfully");
+    loadStudents();
+  } catch (error) {
+    console.log(error);
+    alert("Failed to delete student");
+  }
+};
 
   // =======================================
   // Edit Student
