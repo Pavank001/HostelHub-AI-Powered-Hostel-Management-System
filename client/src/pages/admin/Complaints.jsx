@@ -90,12 +90,12 @@ const handleDelete = async (id) => {
 
     toast.success("Complaint Deleted Successfully");
 
-    loadComplaints();
-  } catch (err) {
-    console.log(err);
+    await loadComplaints();
+  } catch (error) {
+    console.log(error);
 
     toast.error(
-      err.response?.data?.message ||
+      error.response?.data?.message ||
         "Failed to delete complaint"
     );
   }
