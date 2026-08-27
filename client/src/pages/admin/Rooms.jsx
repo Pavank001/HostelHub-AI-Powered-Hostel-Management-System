@@ -18,16 +18,13 @@ function Rooms() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
 
-  // Room that user wants to delete
-  const [deleteRoomData, setDeleteRoomData] = useState(null);
+  // =======================================
+  // Load Rooms
+  // =======================================
 
   useEffect(() => {
     loadRooms();
   }, []);
-
-  // =======================================
-  // Load Rooms
-  // =======================================
 
   const loadRooms = async () => {
     try {
@@ -96,26 +93,14 @@ function Rooms() {
   };
 
   // =======================================
-  // Open Delete Confirmation
+  // Delete Room
   // =======================================
 
-  const handleDeleteClick = (room) => {
-    setDeleteRoomData(room);
-  };
-
-  // =======================================
-  // Confirm Delete
-  // =======================================
-
-  const handleConfirmDelete = async () => {
-    if (!deleteRoomData) return;
-
+  const handleDelete = async (room) => {
     try {
-      await deleteRoom(deleteRoomData._id);
+      await deleteRoom(room._id);
 
       toast.success("Room Deleted Successfully");
-
-      setDeleteRoomData(null);
 
       await loadRooms();
     } catch (error) {
@@ -129,19 +114,13 @@ function Rooms() {
   };
 
   // =======================================
-  // Cancel Delete
+  // UI
   // =======================================
-
-  const handleCancelDelete = () => {
-    setDeleteRoomData(null);
-  };
 
   return (
     <AdminLayout>
 
-      {/* ===================================
-          HEADER
-      =================================== */}
+      {/* Header */}
 
       <div className="flex justify-between items-center mb-6">
 
@@ -158,21 +137,15 @@ function Rooms() {
 
       </div>
 
-
-      {/* ===================================
-          ROOM TABLE
-      =================================== */}
+      {/* Room Table */}
 
       <RoomTable
         rooms={rooms}
         onEdit={handleEdit}
-        onDelete={handleDeleteClick}
+        onDelete={handleDelete}
       />
 
-
-      {/* ===================================
-          ADD ROOM MODAL
-      =================================== */}
+      {/* Add Room Modal */}
 
       {showAddModal && (
         <AddRoomModal
@@ -181,10 +154,7 @@ function Rooms() {
         />
       )}
 
-
-      {/* ===================================
-          EDIT ROOM MODAL
-      =================================== */}
+      {/* Edit Room Modal */}
 
       {selectedRoom && (
         <EditRoomModal
@@ -192,74 +162,6 @@ function Rooms() {
           onClose={() => setSelectedRoom(null)}
           onSave={handleUpdate}
         />
-      )}
-
-
-      {/* ===================================
-          DELETE CONFIRMATION MODAL
-      =================================== */}
-
-      {deleteRoomData && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
-
-            {/* Icon */}
-
-            <div className="flex justify-center mb-4">
-
-              <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center text-2xl">
-                ⚠️
-              </div>
-
-            </div>
-
-
-            {/* Title */}
-
-            <h2 className="text-xl font-bold text-center text-gray-900">
-              Delete Room?
-            </h2>
-
-
-            {/* Message */}
-
-            <p className="text-center text-gray-500 mt-2">
-              Are you sure you want to delete room{" "}
-              <span className="font-semibold text-gray-800">
-                {deleteRoomData.roomNumber}
-              </span>
-              ?
-            </p>
-
-            <p className="text-center text-sm text-red-500 mt-2">
-              This action cannot be undone.
-            </p>
-
-
-            {/* Buttons */}
-
-            <div className="flex justify-center gap-3 mt-6">
-
-              <button
-                onClick={handleCancelDelete}
-                className="px-5 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={handleConfirmDelete}
-                className="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold"
-              >
-                Delete Room
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
       )}
 
     </AdminLayout>
