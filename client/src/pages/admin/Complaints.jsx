@@ -84,30 +84,22 @@ function Complaints() {
   // Delete Complaint
   // =======================================
 
-  const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this complaint?"
+const handleDelete = async (id) => {
+  try {
+    await deleteComplaint(id);
+
+    toast.success("Complaint Deleted Successfully");
+
+    loadComplaints();
+  } catch (err) {
+    console.log(err);
+
+    toast.error(
+      err.response?.data?.message ||
+        "Failed to delete complaint"
     );
-
-    if (!confirmed) return;
-
-    try {
-      await deleteComplaint(id);
-
-      toast.success(
-        "Complaint Deleted Successfully"
-      );
-
-      loadComplaints();
-    } catch (err) {
-      console.log(err);
-
-      toast.error(
-        err.response?.data?.message ||
-          "Failed to delete complaint"
-      );
-    }
-  };
+  }
+};
 
   // =======================================
   // UI

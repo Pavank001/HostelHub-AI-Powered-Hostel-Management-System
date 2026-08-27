@@ -83,30 +83,22 @@ function Leaves() {
   // Delete Leave
   // =======================================
 
-  const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this leave request?"
+ const handleDelete = async (id) => {
+  try {
+    await deleteLeave(id);
+
+    toast.success("Leave Deleted Successfully");
+
+    await loadLeaves();
+  } catch (error) {
+    console.log(error);
+
+    toast.error(
+      error.response?.data?.message ||
+        "Failed to delete leave"
     );
-
-    if (!confirmed) return;
-
-    try {
-      await deleteLeave(id);
-
-      toast.success(
-        "Leave Deleted Successfully"
-      );
-
-      loadLeaves();
-    } catch (error) {
-      console.log(error);
-
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to delete leave"
-      );
-    }
-  };
+  }
+};
 
   // =======================================
   // UI
