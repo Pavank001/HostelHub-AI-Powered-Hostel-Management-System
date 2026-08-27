@@ -14,16 +14,24 @@ function Rooms() {
     loadRooms();
   }, []);
 
-  const loadRooms = async () => {
-    try {
-      const data = await getAllRooms();
+ const loadRooms = async () => {
+  try {
+    const data = await getAllRooms();
 
-      setRooms(data.rooms || []);
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to load rooms");
-    }
-  };
+    console.log("ROOMS RESPONSE:", data);
+
+    setRooms(data.rooms || []);
+  } catch (error) {
+    console.log("ROOMS ERROR:", error);
+    console.log("STATUS:", error.response?.status);
+    console.log("ERROR DATA:", error.response?.data);
+
+    toast.error(
+      error.response?.data?.message ||
+        "Failed to load rooms"
+    );
+  }
+};
 
   const handleAdd = async (formData) => {
     try {
