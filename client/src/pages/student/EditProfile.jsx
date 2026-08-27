@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaPhone, FaEnvelope } from "react-icons/fa";
 import { updateProfile } from "../../services/studentService";
@@ -39,14 +40,14 @@ function EditProfile() {
 
     localStorage.setItem("user", JSON.stringify(data.student));
 
-    alert("✅ Profile Updated Successfully");
+    toast.success("✅ Profile Updated Successfully");
 
     navigate("/student/profile");
 
   } catch (error) {
     console.log(error);
 
-    alert(
+    toast.error(
       error.response?.data?.message || "Failed to update profile"
     );
   }
