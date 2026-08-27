@@ -52,6 +52,7 @@ function Complaints() {
         error.response?.data?.message ||
         "Failed to submit complaint"
       );
+      throw error;
     }
   };
 
