@@ -8,6 +8,8 @@ function ComplaintForm({ onSubmit }) {
     priority: "Medium",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -15,21 +17,32 @@ function ComplaintForm({ onSubmit }) {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    onSubmit(formData);
+    try {
+      setLoading(true);
 
-    setFormData({
-      title: "",
-      description: "",
-      category: "Other",
-      priority: "Medium",
-    });
+      await onSubmit(formData);
+
+      // Clear form only after successful submission
+      setFormData({
+        title: "",
+        description: "",
+        category: "Other",
+        priority: "Medium",
+      });
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="bg-white rounded-xl shadow p-6 mb-6">
+
       <h2 className="text-2xl font-bold mb-5">
         Submit Complaint
       </h2>
@@ -86,9 +99,10 @@ function ComplaintForm({ onSubmit }) {
 
         <button
           type="submit"
-          className="bg-blue-600 text-white px-5 py-3 rounded hover:bg-blue-700"
+          disabled={loading}
+          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-5 py-3 rounded"
         >
-          Submit Complaint
+          {loading ? "Submitting..." : "Submit Complaint"}
         </button>
 
       </form>
