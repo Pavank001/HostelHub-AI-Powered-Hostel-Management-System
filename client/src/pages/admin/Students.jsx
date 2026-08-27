@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 import AdminLayout from "../../layouts/AdminLayout";
 import StudentTable from "../../components/StudentTable";
 import EditStudentModal from "../../components/EditStudentModal";
