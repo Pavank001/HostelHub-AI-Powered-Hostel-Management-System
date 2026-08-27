@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import StudentLayout from "../../layouts/StudentLayout";
 import ComplaintForm from "../../components/ComplaintForm";
 import ComplaintCard from "../../components/ComplaintCard";
@@ -24,16 +25,34 @@ function Complaints() {
     }
   };
 
-  const handleSubmit = async (formData) => {
-    try {
-      await createComplaint(formData);
-      alert("Complaint Submitted Successfully");
-      loadComplaints();
-    } catch (err) {
-      console.log(err);
-      alert("Failed to submit complaint");
-    }
-  };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    await createComplaint(formData);
+
+    toast.success("Complaint Submitted Successfully");
+
+    // clear form
+    setFormData({
+      title: "",
+      description: "",
+      category: "Other",
+      priority: "Medium",
+    });
+
+    // reload complaints if you have this function
+    await loadComplaints();
+
+  } catch (error) {
+    console.log(error);
+
+    toast.error(
+      error.response?.data?.message ||
+      "Failed to submit complaint"
+    );
+  }
+};
 
   return (
     <StudentLayout>
