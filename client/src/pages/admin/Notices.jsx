@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 import AdminLayout from "../../layouts/AdminLayout";
 import NoticeForm from "../../components/NoticeForm";
@@ -29,7 +30,7 @@ function Notices() {
     } catch (error) {
       console.log("LOAD NOTICES ERROR:", error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Failed to load notices"
       );
@@ -44,13 +45,13 @@ function Notices() {
     try {
       await createNotice(formData);
 
-      alert("Notice Published Successfully");
+      toast.success("Notice Published Successfully");
 
       await loadNotices();
     } catch (error) {
       console.log("CREATE NOTICE ERROR:", error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Failed to publish notice"
       );
@@ -71,13 +72,13 @@ function Notices() {
     try {
       await deleteNotice(id);
 
-      alert("Notice Deleted Successfully");
+      toast.success("Notice Deleted Successfully");
 
       await loadNotices();
     } catch (error) {
       console.log("DELETE NOTICE ERROR:", error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Failed to delete notice"
       );

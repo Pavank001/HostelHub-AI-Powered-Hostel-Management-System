@@ -1,4 +1,11 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+
+import { Toaster } from "react-hot-toast";
 
 // Authentication
 import Login from "./pages/auth/Login";
@@ -26,6 +33,9 @@ import AdminNotices from "./pages/admin/Notices";
 // AI Chat
 import AIChat from "./components/ai/AIChat";
 
+// =======================================
+// Student AI Chat
+// =======================================
 
 function StudentAIChat() {
   const location = useLocation();
@@ -41,7 +51,9 @@ function StudentAIChat() {
     "/student/notices",
   ];
 
-  const isStudentPage = studentPages.includes(location.pathname);
+  const isStudentPage = studentPages.includes(
+    location.pathname
+  );
 
   if (!isStudentPage) {
     return null;
@@ -50,17 +62,41 @@ function StudentAIChat() {
   return <AIChat />;
 }
 
+// =======================================
+// App
+// =======================================
 
 function App() {
   return (
     <BrowserRouter>
 
+      {/* Toast Notifications */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+        }}
+      />
+
       <Routes>
 
-        {/* Authentication */}
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/* ================= AUTHENTICATION ================= */}
+
+        <Route
+          path="/"
+          element={<Login />}
+        />
+
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+        <Route
+          path="/register"
+          element={<Register />}
+        />
+
 
         {/* ================= STUDENT ================= */}
 
@@ -104,6 +140,7 @@ function App() {
           element={<StudentNotices />}
         />
 
+
         {/* ================= ADMIN ================= */}
 
         <Route
@@ -143,7 +180,7 @@ function App() {
 
       </Routes>
 
-      {/* AI only on student pages */}
+      {/* AI Chat only on student pages */}
       <StudentAIChat />
 
     </BrowserRouter>

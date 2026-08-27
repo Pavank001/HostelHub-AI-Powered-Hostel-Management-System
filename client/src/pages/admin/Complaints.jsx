@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
 import AdminLayout from "../../layouts/AdminLayout";
 
 import ComplaintTable from "../../components/ComplaintTable";
@@ -15,6 +17,10 @@ function Complaints() {
   const [selectedComplaint, setSelectedComplaint] =
     useState(null);
 
+  // =======================================
+  // Load Complaints
+  // =======================================
+
   useEffect(() => {
     loadComplaints();
   }, []);
@@ -22,50 +28,94 @@ function Complaints() {
   const loadComplaints = async () => {
     try {
       const data = await getAllComplaints();
-      setComplaints(data.complaints);
+
+      setComplaints(data.complaints || []);
     } catch (err) {
       console.log(err);
+
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to load complaints"
+      );
     }
   };
+
+  // =======================================
+  // Status Change
+  // =======================================
 
   const handleStatusChange = (id) => {
     const complaint = complaints.find(
       (c) => c._id === id
     );
+
     setSelectedComplaint(complaint);
   };
 
+  // =======================================
+  // Update Complaint
+  // =======================================
+
   const handleSave = async (id, formData) => {
     try {
-      await updateComplaintStatus(id, formData);
+      await updateComplaintStatus(
+        id,
+        formData
+      );
 
-      alert("Complaint Updated Successfully");
+      toast.success(
+        "Complaint Updated Successfully"
+      );
 
       setSelectedComplaint(null);
 
       loadComplaints();
     } catch (err) {
       console.log(err);
+
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to update complaint"
+      );
     }
   };
 
+  // =======================================
+  // Delete Complaint
+  // =======================================
+
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete Complaint?"))
-      return;
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this complaint?"
+    );
+
+    if (!confirmed) return;
 
     try {
       await deleteComplaint(id);
 
-      alert("Complaint Deleted");
+      toast.success(
+        "Complaint Deleted Successfully"
+      );
 
       loadComplaints();
     } catch (err) {
       console.log(err);
+
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to delete complaint"
+      );
     }
   };
 
+  // =======================================
+  // UI
+  // =======================================
+
   return (
     <AdminLayout>
+
       <h1 className="text-3xl font-bold mb-6">
         Complaint Management
       </h1>
@@ -85,6 +135,7 @@ function Complaints() {
           onSave={handleSave}
         />
       )}
+
     </AdminLayout>
   );
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import AdminLayout from "../../layouts/AdminLayout";
 import StudentTable from "../../components/StudentTable";
 import EditStudentModal from "../../components/EditStudentModal";
@@ -17,6 +18,10 @@ function Students() {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [assignStudent, setAssignStudent] = useState(null);
 
+  // =======================================
+  // Load Students
+  // =======================================
+
   useEffect(() => {
     loadStudents();
   }, []);
@@ -24,76 +29,124 @@ function Students() {
   const loadStudents = async () => {
     try {
       const data = await getAllStudents();
-      setStudents(data.students);
+
+      setStudents(data.students || []);
     } catch (error) {
       console.log(error);
-      alert("Failed to load students");
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to load students"
+      );
     }
   };
 
+  // =======================================
+  // Delete Student
+  // =======================================
+
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this student?")) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this student?"
+    );
+
+    if (!confirmed) {
       return;
     }
 
     try {
       await deleteStudent(id);
-      alert("Student Deleted Successfully");
+
+      toast.success(
+        "Student Deleted Successfully"
+      );
+
       loadStudents();
     } catch (error) {
       console.log(error);
-      alert("Failed to delete student");
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to delete student"
+      );
     }
   };
+
+  // =======================================
+  // Edit Student
+  // =======================================
 
   const handleEdit = (student) => {
     setSelectedStudent(student);
   };
 
+  // =======================================
+  // Update Student
+  // =======================================
+
   const handleSave = async (id, formData) => {
     try {
       await updateStudent(id, formData);
 
-      alert("Student Updated Successfully");
+      toast.success(
+        "Student Updated Successfully"
+      );
 
       setSelectedStudent(null);
 
       loadStudents();
     } catch (error) {
       console.log(error);
-      alert("Failed to update student");
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to update student"
+      );
     }
   };
 
+  // =======================================
   // Assign Room
+  // =======================================
+
   const handleAssignClick = (student) => {
     setAssignStudent(student);
   };
 
-  const handleAssignRoom = async (studentId, roomId) => {
-  try {
-    await assignRoom({
-      studentId,
-      roomId,
-    });
+  const handleAssignRoom = async (
+    studentId,
+    roomId
+  ) => {
+    try {
+      await assignRoom({
+        studentId,
+        roomId,
+      });
 
-    alert("Room Assigned Successfully");
+      toast.success(
+        "Room Assigned Successfully"
+      );
 
-    setAssignStudent(null);
+      setAssignStudent(null);
 
-    loadStudents();
-  } catch (error) {
-    console.log(error);
+      loadStudents();
+    } catch (error) {
+      console.log(error);
 
-    alert(
-      error.response?.data?.message ||
-        "Failed to assign room"
-    );
-  }
-};
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to assign room"
+      );
+    }
+  };
+
+  // =======================================
+  // UI
+  // =======================================
 
   return (
     <AdminLayout>
+
       <h1 className="text-3xl font-bold mb-6">
         Student Management
       </h1>
@@ -105,21 +158,30 @@ function Students() {
         onAssign={handleAssignClick}
       />
 
+      {/* Edit Student */}
+
       {selectedStudent && (
         <EditStudentModal
           student={selectedStudent}
-          onClose={() => setSelectedStudent(null)}
+          onClose={() =>
+            setSelectedStudent(null)
+          }
           onSave={handleSave}
         />
       )}
 
+      {/* Assign Room */}
+
       {assignStudent && (
         <AssignRoomModal
           student={assignStudent}
-          onClose={() => setAssignStudent(null)}
+          onClose={() =>
+            setAssignStudent(null)
+          }
           onAssign={handleAssignRoom}
         />
       )}
+
     </AdminLayout>
   );
 }

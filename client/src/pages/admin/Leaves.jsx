@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
 import AdminLayout from "../../layouts/AdminLayout";
 
 import LeaveTable from "../../components/LeaveTable";
@@ -14,6 +16,10 @@ function Leaves() {
   const [leaves, setLeaves] = useState([]);
   const [selectedLeave, setSelectedLeave] = useState(null);
 
+  // =======================================
+  // Load Leaves
+  // =======================================
+
   useEffect(() => {
     loadLeaves();
   }, []);
@@ -21,50 +27,94 @@ function Leaves() {
   const loadLeaves = async () => {
     try {
       const data = await getAllLeaves();
-      setLeaves(data.leaves);
+
+      setLeaves(data.leaves || []);
     } catch (error) {
       console.log(error);
-      alert("Failed to load leaves");
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to load leaves"
+      );
     }
   };
 
+  // =======================================
+  // Status Change
+  // =======================================
+
   const handleStatusChange = (id) => {
-    const leave = leaves.find((l) => l._id === id);
+    const leave = leaves.find(
+      (l) => l._id === id
+    );
+
     setSelectedLeave(leave);
   };
 
+  // =======================================
+  // Update Leave
+  // =======================================
+
   const handleSave = async (id, formData) => {
     try {
-      await updateLeaveStatus(id, formData);
+      await updateLeaveStatus(
+        id,
+        formData
+      );
 
-      alert("Leave Updated Successfully");
+      toast.success(
+        "Leave Updated Successfully"
+      );
 
       setSelectedLeave(null);
 
       loadLeaves();
     } catch (error) {
       console.log(error);
-      alert("Failed to update leave");
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to update leave"
+      );
     }
   };
 
+  // =======================================
+  // Delete Leave
+  // =======================================
+
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this leave request?")) return;
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this leave request?"
+    );
+
+    if (!confirmed) return;
 
     try {
       await deleteLeave(id);
 
-      alert("Leave Deleted Successfully");
+      toast.success(
+        "Leave Deleted Successfully"
+      );
 
       loadLeaves();
     } catch (error) {
       console.log(error);
-      alert("Failed to delete leave");
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to delete leave"
+      );
     }
   };
 
+  // =======================================
+  // UI
+  // =======================================
+
   return (
     <AdminLayout>
+
       <h1 className="text-3xl font-bold mb-6">
         Leave Management
       </h1>
@@ -78,10 +128,13 @@ function Leaves() {
       {selectedLeave && (
         <LeaveStatusModal
           leave={selectedLeave}
-          onClose={() => setSelectedLeave(null)}
+          onClose={() =>
+            setSelectedLeave(null)
+          }
           onSave={handleSave}
         />
       )}
+
     </AdminLayout>
   );
 }

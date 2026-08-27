@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
 import AdminLayout from "../../layouts/AdminLayout";
 
 import StatsGrid from "../../components/StatsGrid";
@@ -13,6 +15,10 @@ function Dashboard() {
     loadDashboard();
   }, []);
 
+  // =======================================
+  // Load Dashboard
+  // =======================================
+
   const loadDashboard = async () => {
     try {
       const data = await getAdminDashboard();
@@ -22,9 +28,17 @@ function Dashboard() {
       setStats(data.stats);
     } catch (error) {
       console.log("DASHBOARD ERROR:", error);
-      alert("Failed to load dashboard");
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to load dashboard"
+      );
     }
   };
+
+  // =======================================
+  // Loading
+  // =======================================
 
   if (!stats) {
     return (
@@ -35,6 +49,10 @@ function Dashboard() {
       </AdminLayout>
     );
   }
+
+  // =======================================
+  // UI
+  // =======================================
 
   return (
     <AdminLayout>

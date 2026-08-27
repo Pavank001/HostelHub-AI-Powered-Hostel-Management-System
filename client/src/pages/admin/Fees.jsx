@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 import AdminLayout from "../../layouts/AdminLayout";
 
@@ -97,7 +98,7 @@ function Fees() {
     try {
       await createFee(formData);
 
-      alert("Fee Added Successfully");
+      toast.success("Fee Added Successfully");
 
       setShowAddModal(false);
 
@@ -105,7 +106,7 @@ function Fees() {
     } catch (error) {
       console.log(error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Failed to add fee"
       );
@@ -186,14 +187,14 @@ const handleMarkAsPaid = async (id) => {
     console.log("MARK PAID RESPONSE:", response);
 
     if (response.success) {
-      alert("Fee marked as Paid successfully");
+      toast.success("Fee marked as Paid successfully");
       await loadFees();
     }
   } catch (error) {
     console.log("MARK PAID ERROR:", error);
     console.log("ERROR RESPONSE:", error.response?.data);
 
-    alert(
+    toast.error(
       error.response?.data?.message ||
         "Failed to update fee status"
     );
