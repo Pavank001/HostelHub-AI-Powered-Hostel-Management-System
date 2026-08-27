@@ -25,15 +25,12 @@ function Complaints() {
     }
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-
+ const handleSubmit = async (formData) => {
   try {
     await createComplaint(formData);
 
     toast.success("Complaint Submitted Successfully");
 
-    // clear form
     setFormData({
       title: "",
       description: "",
@@ -41,7 +38,6 @@ function Complaints() {
       priority: "Medium",
     });
 
-    // reload complaints if you have this function
     await loadComplaints();
 
   } catch (error) {
