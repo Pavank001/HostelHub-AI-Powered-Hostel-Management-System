@@ -75,3 +75,30 @@ export const assignRoom = async (data) => {
 
   return response.data;
 };
+
+// =======================================
+// Student - Get My Room
+// =======================================
+
+export const getMyRoom = async () => {
+  const response = await API.get(
+    "/allocation/my-room",
+    authConfig()
+  );
+
+  return response.data;
+};
+
+
+// =======================================
+// Admin - Get Available Rooms
+// =======================================
+
+export const getAvailableRooms = async () => {
+  const response = await API.get(
+    "/rooms/available",
+    authConfig()
+  );
+
+  return response.data;
+};
