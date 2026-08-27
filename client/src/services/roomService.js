@@ -4,11 +4,10 @@ const getToken = () => localStorage.getItem("token");
 
 // Get all rooms
 export const getAllRooms = async () => {
-  const response = await API.get("/rooms", {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
+  const response = await API.get(
+    "/rooms",
+    authConfig()
+  );
 
   return response.data;
 };

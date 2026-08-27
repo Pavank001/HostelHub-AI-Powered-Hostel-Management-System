@@ -5,6 +5,13 @@ import AdminLayout from "../../layouts/AdminLayout";
 import RoomTable from "../../components/RoomTable";
 import AddRoomModal from "../../components/AddRoomModal";
 import EditRoomModal from "../../components/EditRoomModal";
+import {
+  getAllRooms,
+  createRoom,
+  updateRoom,
+  deleteRoom,
+} from "../../services/roomService";
+
 function Rooms() {
   const [rooms, setRooms] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
