@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAvailableRooms } from "../services/roomService";
-
+import toast from "react-hot-toast";
 function AssignRoomModal({ student, onAssign, onClose }) {
   const [rooms, setRooms] = useState([]);
   const [roomId, setRoomId] = useState("");
@@ -26,7 +26,7 @@ function AssignRoomModal({ student, onAssign, onClose }) {
     } catch (error) {
       console.log(error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Failed to load available rooms"
       );
@@ -40,7 +40,7 @@ function AssignRoomModal({ student, onAssign, onClose }) {
     e.preventDefault();
 
     if (!roomId) {
-      alert("Please select a room");
+      toast.error("Please select a room");
       return;
     }
 

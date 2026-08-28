@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../services/authService";
-
+import toast from "react-hot-toast";
 function Login() {
   const navigate = useNavigate();
   const [dark, setDark] = useState(false);
@@ -24,7 +24,7 @@ function Login() {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
-      alert("Please enter email and password");
+      toast.error("Please enter email and password");
       return;
     }
 
@@ -47,7 +47,7 @@ function Login() {
     } catch (error) {
       console.error(error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Login failed. Please check your email and password."
       );

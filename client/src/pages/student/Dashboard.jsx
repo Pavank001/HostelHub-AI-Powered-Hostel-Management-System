@@ -4,7 +4,7 @@ import DashboardCard from "../../components/DashboardCard";
 import NoticeBoard from "../../components/NoticeBoard";
 import { getStudentDashboard } from "../../services/dashboardService";
 import AIChat from "../../components/ai/AIChat";
-
+import toast from "react-hot-toast";
 function Dashboard() {
   const [stats, setStats] = useState(null);
 
@@ -19,7 +19,7 @@ function Dashboard() {
     } catch (error) {
       console.log(error);
 
-      alert("Failed to load dashboard");
+      toast.error("Failed to load dashboard");
     }
   };
 

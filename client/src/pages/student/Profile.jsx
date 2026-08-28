@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import toast from "react-hot-toast";
 import StudentLayout from "../../layouts/StudentLayout";
 import { getProfile } from "../../services/studentService";
 import ProfileCard from "../../components/ProfileCard";
@@ -20,7 +20,7 @@ function Profile() {
       setUser(data.student);
     } catch (error) {
       console.log(error);
-      alert("Failed to load profile");
+      toast.error("Failed to load profile");
     }
   };
 

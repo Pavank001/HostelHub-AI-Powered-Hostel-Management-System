@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import toast from "react-hot-toast";
 function NoticeForm({ onSubmit }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -8,12 +8,12 @@ function NoticeForm({ onSubmit }) {
     e.preventDefault();
 
     if (!title.trim()) {
-      alert("Please enter notice title");
+      toast.error("Please enter notice title");
       return;
     }
 
     if (!description.trim()) {
-      alert("Please enter notice description");
+      toast.error("Please enter notice description");
       return;
     }
 

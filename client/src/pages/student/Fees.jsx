@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import StudentLayout from "../../layouts/StudentLayout";
 import FeeCard from "../../components/FeeCard";
-
+import toast from "react-hot-toast";
 import { getMyFees } from "../../services/feeService";
 
 function Fees() {
@@ -20,7 +20,7 @@ function Fees() {
     setFees(data.fees);
   } catch (error) {
     console.log(error);
-    alert("Failed to load fees");
+    toast.error("Failed to load fees");
   }
 };
 

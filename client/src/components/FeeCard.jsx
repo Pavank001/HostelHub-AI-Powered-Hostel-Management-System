@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { sendPaymentNote } from "../services/feeService";
-
+import toast from "react-hot-toast";
 function FeeCard({ fee }) {
   const [note, setNote] = useState("");
   const [sending, setSending] = useState(false);
@@ -10,7 +10,7 @@ function FeeCard({ fee }) {
 
   const handleSendNote = async () => {
     if (!note.trim()) {
-      alert("Please write a message to admin.");
+      toast.error("Please write a message to admin.");
       return;
     }
 
@@ -27,7 +27,7 @@ function FeeCard({ fee }) {
   console.log("STATUS:", error.response?.status);
   console.log("DATA:", error.response?.data);
 
-  alert(
+  toast.error(
     error.response?.data?.message ||
       error.message ||
       "Failed to send payment note"
