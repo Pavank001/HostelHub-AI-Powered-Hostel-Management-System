@@ -17,11 +17,12 @@ function Room() {
       setRoom(data.room);
     } catch (error) {
       console.log(error);
+      toast.error("No room assigned yet.");
 
       if (error.response?.status === 404) {
-        alert("No room assigned yet.");
+        toast.error("No room assigned yet.");
       } else {
-        alert("Failed to load room details.");
+        toast.error("Failed to load room details.");
       }
     } finally {
       setLoading(false);

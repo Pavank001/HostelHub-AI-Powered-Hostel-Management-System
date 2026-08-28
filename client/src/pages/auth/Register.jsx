@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../../services/authService";
+import toast from "react-hot-toast";
 
 function Register() {
   const navigate = useNavigate();
+
   const [dark, setDark] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -16,6 +18,10 @@ function Register() {
 
   const [loading, setLoading] = useState(false);
 
+  // =====================================
+  // Handle Input Change
+  // =====================================
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -23,8 +29,14 @@ function Register() {
     });
   };
 
+  // =====================================
+  // Handle Registration
+  // =====================================
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (loading) return;
 
     setLoading(true);
 
@@ -37,13 +49,18 @@ function Register() {
 
       await registerUser(studentData);
 
-      alert("Student Registration Successful!");
+      // Show toast notification instead of browser popup
+      toast.success("Student Registration Successful!");
 
-      navigate("/login");
+      // Go to login page
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+
     } catch (error) {
-      console.log(error);
+      console.log("REGISTRATION ERROR:", error);
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Registration Failed"
       );
@@ -58,6 +75,7 @@ function Register() {
         dark ? "bg-gray-950" : "bg-gray-100"
       }`}
     >
+
       <div
         className={`w-full max-w-md p-8 rounded-xl shadow-lg transition-colors duration-300 ${
           dark
@@ -65,25 +83,34 @@ function Register() {
             : "bg-white text-gray-900"
         }`}
       >
+
         {/* Title */}
+
         <h1 className="text-3xl font-bold text-center mb-2">
           HostelHub Registration
         </h1>
 
         <p
           className={`text-center mb-8 ${
-            dark ? "text-gray-300" : "text-gray-600"
+            dark
+              ? "text-gray-300"
+              : "text-gray-600"
           }`}
         >
           Create your Student account
         </p>
 
+        {/* Form */}
+
         <form onSubmit={handleSubmit}>
 
           {/* Full Name */}
+
           <label
             className={`block mb-2 font-semibold ${
-              dark ? "text-gray-200" : "text-gray-700"
+              dark
+                ? "text-gray-200"
+                : "text-gray-700"
             }`}
           >
             Full Name
@@ -104,9 +131,12 @@ function Register() {
           />
 
           {/* Email */}
+
           <label
             className={`block mb-2 font-semibold ${
-              dark ? "text-gray-200" : "text-gray-700"
+              dark
+                ? "text-gray-200"
+                : "text-gray-700"
             }`}
           >
             Email
@@ -127,9 +157,12 @@ function Register() {
           />
 
           {/* Phone */}
+
           <label
             className={`block mb-2 font-semibold ${
-              dark ? "text-gray-200" : "text-gray-700"
+              dark
+                ? "text-gray-200"
+                : "text-gray-700"
             }`}
           >
             Phone Number
@@ -150,9 +183,12 @@ function Register() {
           />
 
           {/* Password */}
+
           <label
             className={`block mb-2 font-semibold ${
-              dark ? "text-gray-200" : "text-gray-700"
+              dark
+                ? "text-gray-200"
+                : "text-gray-700"
             }`}
           >
             Password
@@ -172,7 +208,8 @@ function Register() {
             required
           />
 
-          {/* Register */}
+          {/* Register Button */}
+
           <button
             type="submit"
             disabled={loading}
@@ -182,16 +219,22 @@ function Register() {
                 : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
-            {loading ? "Registering..." : "Register as Student"}
+            {loading
+              ? "Registering..."
+              : "Register as Student"}
           </button>
 
           {/* Login */}
+
           <p
             className={`text-center mt-6 ${
-              dark ? "text-gray-300" : "text-gray-600"
+              dark
+                ? "text-gray-300"
+                : "text-gray-600"
             }`}
           >
             Already have an account?{" "}
+
             <Link
               to="/login"
               className="text-blue-500 hover:text-blue-400 font-semibold"
@@ -199,6 +242,7 @@ function Register() {
               Login
             </Link>
           </p>
+
         </form>
       </div>
     </div>
