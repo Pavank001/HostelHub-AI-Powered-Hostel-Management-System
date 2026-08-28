@@ -7,6 +7,12 @@ function LeaveForm({ onSubmit }) {
     reason: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
+  // =======================================
+  // Handle Input Change
+  // =======================================
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -14,26 +20,45 @@ function LeaveForm({ onSubmit }) {
     });
   };
 
-  const handleSubmit = (e) => {
+  // =======================================
+  // Submit Leave
+  // =======================================
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    onSubmit(formData);
+    try {
+      setLoading(true);
 
-    setFormData({
-      fromDate: "",
-      toDate: "",
-      reason: "",
-    });
+      await onSubmit(formData);
+
+      // Clear form only after successful submission
+      setFormData({
+        fromDate: "",
+        toDate: "",
+        reason: "",
+      });
+
+    } catch (error) {
+      console.log("LEAVE FORM ERROR:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="bg-white rounded-xl shadow p-6 mb-6">
+
       <h2 className="text-2xl font-bold mb-5">
         Apply Leave
       </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4"
+      >
 
+        {/* From Date */}
         <input
           type="date"
           name="fromDate"
@@ -43,6 +68,7 @@ function LeaveForm({ onSubmit }) {
           required
         />
 
+        {/* To Date */}
         <input
           type="date"
           name="toDate"
@@ -52,6 +78,7 @@ function LeaveForm({ onSubmit }) {
           required
         />
 
+        {/* Reason */}
         <textarea
           name="reason"
           placeholder="Reason"
@@ -62,11 +89,13 @@ function LeaveForm({ onSubmit }) {
           required
         />
 
+        {/* Submit Button */}
         <button
           type="submit"
-          className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700"
+          disabled={loading}
+          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-3 rounded"
         >
-          Apply Leave
+          {loading ? "Applying..." : "Apply Leave"}
         </button>
 
       </form>

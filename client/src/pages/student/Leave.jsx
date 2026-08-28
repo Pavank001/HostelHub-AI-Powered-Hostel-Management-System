@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import StudentLayout from "../../layouts/StudentLayout";
+import toast from "react-hot-toast";
 
+import StudentLayout from "../../layouts/StudentLayout";
 import LeaveForm from "../../components/LeaveForm";
 import LeaveCard from "../../components/LeaveCard";
 
@@ -12,6 +13,10 @@ import {
 function Leave() {
   const [leaves, setLeaves] = useState([]);
 
+  // =======================================
+  // Load Leaves
+  // =======================================
+
   useEffect(() => {
     loadLeaves();
   }, []);
@@ -19,42 +24,67 @@ function Leave() {
   const loadLeaves = async () => {
     try {
       const data = await getMyLeaves();
-      setLeaves(data.leaves);
+
+      setLeaves(data.leaves || []);
     } catch (error) {
-      console.log(error);
-      alert("Failed to load leaves");
+      console.log("LOAD LEAVES ERROR:", error);
+
+      toast.error(
+        error.response?.data?.message ||
+        "Failed to load leaves"
+      );
     }
   };
+
+  // =======================================
+  // Apply Leave
+  // =======================================
 
   const handleSubmit = async (formData) => {
     try {
       await applyLeave(formData);
 
-      alert("Leave Applied Successfully");
+      // Success toast instead of browser popup
+      toast.success("Leave Applied Successfully");
 
-      loadLeaves();
+      // Reload leave requests
+      await loadLeaves();
+
     } catch (error) {
-      console.log(error);
-      alert("Failed to apply leave");
+      console.log("APPLY LEAVE ERROR:", error);
+
+      toast.error(
+        error.response?.data?.message ||
+        "Failed to apply leave"
+      );
+
+      // Send error back to LeaveForm
+      throw error;
     }
   };
 
   return (
     <StudentLayout>
+
       <h1 className="text-3xl font-bold mb-6">
         My Leave Requests
       </h1>
 
-      <LeaveForm onSubmit={handleSubmit} />
+      <LeaveForm
+        onSubmit={handleSubmit}
+      />
 
       <div className="grid md:grid-cols-2 gap-5">
+
         {leaves.map((leave) => (
           <LeaveCard
             key={leave._id}
             leave={leave}
           />
         ))}
+
       </div>
+
     </StudentLayout>
   );
 }
